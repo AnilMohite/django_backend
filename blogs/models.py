@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 class Blog(models.Model):
     blog_title = models.CharField(max_length=255, null=False, blank=False)
@@ -12,5 +13,9 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey("account.user", related_name='blog_user', on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.blog_title)
+        super(Blog, self).save(*args, **kwargs)
+        
     def __str__(self) -> str:
         return f'{self.id} - {self.blog_title}'
